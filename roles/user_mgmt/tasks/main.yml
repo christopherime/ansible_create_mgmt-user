@@ -1,0 +1,22 @@
+- name: Create mgmt user and add to sudoers with SSH key
+  block:
+    - name: Create mgmt user
+      user:
+        name: mgmt
+        shell: /bin/bash
+        groups: sudo
+        append: yes
+        state: present
+
+    - name: Add mgmt user to sudoers
+      lineinfile:
+        path: /etc/sudoers.d/mgmt
+        line: 'mgmt ALL=(ALL) NOPASSWD:ALL'
+        create: yes
+        validate: 'visudo -cf %s'
+
+    - name: Copy SSH key to target
+      authorized_key:
+        user: mgmt
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+        state: present

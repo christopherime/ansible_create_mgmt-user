@@ -1,0 +1,18 @@
+- name: Create and configure mgmt user on target
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  roles:
+    - role: user_mgmt
+      tags: user_mgmt
+
+    - role: ssh_config
+      tags: ssh_config
+
+  handlers:
+    - name: restart sshd
+      systemd:
+        name: sshd
+        state: restarted
+        daemon_reload: yes
